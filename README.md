@@ -1,0 +1,56 @@
+# Login Auth (React + Firebase)
+
+Email/password authentication demo built with React Router, Firebase Auth, and Vite. Users can sign up, log in, reset a password, and access a protected dashboard with session-aware routing.
+
+## Features
+- Email/password signup and login with Firebase Auth
+- Password reset via email
+- Protected routes that redirect unauthenticated users
+- Auth state persistence and loading guard
+- Simple dashboard with sign out
+
+## Prerequisites
+- Node.js 18+ and npm
+- A Firebase project with Email/Password authentication enabled
+
+## Setup
+1) Install dependencies:
+```
+npm install
+```
+2) Configure Firebase:
+   - Create a Web App in Firebase Console and enable Email/Password auth.
+   - Replace the config inside `src/firebase/firebase.js` with your project credentials:
+   ```js
+   const firebaseConfig = {
+     apiKey: "...",
+     authDomain: "...",
+     projectId: "...",
+     storageBucket: "...",
+     messagingSenderId: "...",
+     appId: "...",
+   };
+   ```
+3) Start the dev server:
+```
+npm run dev
+```
+   Vite will show the local URL (default http://localhost:5173).
+
+## Scripts
+- `npm run dev` – start Vite dev server
+- `npm run build` – production build
+- `npm run preview` – preview the production build
+- `npm run lint` – run eslint
+
+## Project structure
+- `src/App.jsx` – routes and protected route wrapper
+- `src/context/AuthContext.jsx` – auth state and sign out helper
+- `src/components/login/` – login + reset password flow
+- `src/components/sign-up/` – registration flow
+- `src/components/dashboard/` – protected dashboard
+- `src/firebase/firebase.js` – Firebase initialization
+
+## Notes
+- If you see analytics errors in development, remove `getAnalytics` or guard it for browser-only usage.
+- Update routing paths as needed if you deploy behind a subpath.

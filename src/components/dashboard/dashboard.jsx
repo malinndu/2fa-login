@@ -1,0 +1,110 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import ProfileCard from "../account-card/account-card";
+import ProfileImage from "../profile-image/ProfileImage";
+// Import the TransferModal component for funds transfer functionality
+import TransferModal from "../transfer-modal/TransferModal";
+
+export default function Dashboard() {
+  const { user, signOutUser } = useAuth();
+  const navigate = useNavigate();
+  // State to control the visibility of the transfer modal
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+
+  const displayName = user?.displayName || user?.email || "User";
+  const pageStyle = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "32px",
+    background: "linear-gradient(135deg, #f5f7fb, #e8f0ff)",
+  };
+  const cardWrapperStyle = { width: "100%", maxWidth: "1100px" };
+  const headerBarStyle = {
+    position: "fixed",
+    top: 20,
+    right: 20,
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    zIndex: 10,
+  };
+  const signOutStyle = {
+    padding: "10px 16px",
+    borderRadius: "10px",
+    border: "none",
+    backgroundColor: "#1f7cff",
+    color: "#fff",
+    fontWeight: 600,
+    cursor: "pointer",
+    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.12)",
+  };
+  const avatarStyle = {
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    backgroundColor: "#e2e8f0",
+    color: "#0f172a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 700,
+    boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
+    overflow: "hidden",
+    border: "2px solid #fff",
+    cursor: "pointer",
+  };
+  const avatarImgStyle = { width: "100%", height: "100%", objectFit: "cover" };
+  // Fallback avatar initial when no photo URL is present.
+  const avatarInitial = (displayName || user?.email || "U").charAt(0).toUpperCase();
+
+  const profileData = {
+    userName: displayName,
+    accountNumber: "1234567890", // masked in card
+    accountType: "Checking",
+    balance: 2500.75,
+    avatarUrl: user?.photoURL || null,
+  };
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    navigate("/", { replace: true });
+  };
+
+  return (
+    <div style={pageStyle}>
+      <div style={headerBarStyle}>
+        <ProfileImage user={user} onSignOut={handleSignOut} />
+        <button style={signOutStyle} onClick={handleSignOut}>
+          Sign Out
+        </button>
+      </div>
+      <div style={cardWrapperStyle}>
+        {/* Pass callback function to open the transfer modal when Transfer button is clicked */}
+        <ProfileCard
+          userName={profileData.userName}
+          accountNumber={profileData.accountNumber}
+          accountType={profileData.accountType}
+          balance={profileData.balance}
+          avatarUrl={profileData.avatarUrl}
+          onTransferClick={() => setIsTransferModalOpen(true)}
+        />
+      </div>
+
+      {/* TransferModal component - renders the funds transfer interface */}
+      {/* isOpen: controls modal visibility */}
+      {/* onClose: callback to close the modal */}
+      {/* user: current authenticated user data */}
+      {/* is2FAEnabled: enables OTP verification for security */}
+      <TransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
+        user={user}
+        is2FAEnabled={true}
+      />
+    </div>
+  );
+}
+
